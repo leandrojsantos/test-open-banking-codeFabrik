@@ -21,7 +21,7 @@ Desenvolvimento de um backend robusto para Open Banking, aplicando boas prática
 ## 🎨 Layout
 
 <p align="center" style="display: flex; align-items: flex-start; justify-content: center;">
-  <img alt="img1" title="#img1" src="./helper/image/" width="400px">
+  <img alt="img1" title="#img1" src="./open-banking-api-nest/src/common/image/" width="400px">
 </p>
 
 
