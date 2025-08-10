@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AccountsService } from './accounts.service';
-import { Account } from './account.entity';
+import { Account } from './entities/account.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
 
 describe('AccountsService', () => {
