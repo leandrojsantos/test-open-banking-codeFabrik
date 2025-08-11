@@ -38,7 +38,7 @@ As seguintes ferramentas foram usadas:
 - Docker
 - Swagger
 - JWT
-- Jest (para testes)
+- Jest 
 
 ## Rodando o projeto
 ```bash
@@ -82,7 +82,8 @@ npm run start:prod
 ## Considerações Finais
 Esta implementação segue boas práticas de desenvolvimento como:
 
-1. **Separação de responsabilidades**: Cada módulo tem sua pasta com controllers, services, entidades e DTOs organizados.
+1. **Separação de responsabilidades**: 
+Cada módulo tem sua pasta com controllers, services, entidades e DTOs organizados.
 
 2. **Segurança**: 
    - Autenticação JWT
@@ -91,7 +92,6 @@ Esta implementação segue boas práticas de desenvolvimento como:
 
 3. **Documentação**: 
    - Swagger integrado
-   - Documentação no código
    - README completo
 
 4. **Testabilidade**: 
