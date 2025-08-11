@@ -1,115 +1,48 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateTables123456789 implements MigrationInterface {
+    name = 'CreateTables123456789';
+
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.createTable(
-            new Table({
-                name: 'users',
-                columns: [
-                    {
-                        name: 'id',
-                        type: 'uuid',
-                        isPrimary: true,
-                        generationStrategy: 'uuid',
-                        default: 'uuid_generate_v4()',
-                    },
-                    {
-                        name: 'email',
-                        type: 'varchar',
-                        isUnique: true,
-                    },
-                    {
-                        name: 'password',
-                        type: 'varchar',
-                    },
-                    {
-                        name: 'firstName',
-                        type: 'varchar',
-                    },
-                    {
-                        name: 'lastName',
-                        type: 'varchar',
-                    },
-                    {
-                        name: 'isActive',
-                        type: 'boolean',
-                        default: true,
-                    },
-                    {
-                        name: 'createdAt',
-                        type: 'timestamp',
-                        default: 'now()',
-                    },
-                    {
-                        name: 'updatedAt',
-                        type: 'timestamp',
-                        default: 'now()',
-                    },
-                ],
-            }),
-            true,
-        );
-
-        await queryRunner.createTable(
-            new Table({
-                name: 'accounts',
-                columns: [
-                    {
-                        name: 'id',
-                        type: 'uuid',
-                        isPrimary: true,
-                        generationStrategy: 'uuid',
-                        default: 'uuid_generate_v4()',
-                    },
-                    {
-                        name: 'accountNumber',
-                        type: 'varchar',
-                        length: '20',
-                        isUnique: true,
-                    },
-                    {
-                        name: 'balance',
-                        type: 'decimal',
-                        precision: 15,
-                        scale: 2,
-                        default: 0,
-                    },
-                    {
-                        name: 'type',
-                        type: 'varchar',
-                        length: '50',
-                    },
-                    {
-                        name: 'ownerId',
-                        type: 'uuid',
-                    },
-                    {
-                        name: 'createdAt',
-                        type: 'timestamp',
-                        default: 'now()',
-                    },
-                    {
-                        name: 'updatedAt',
-                        type: 'timestamp',
-                        default: 'now()',
-                    },
-                ],
-                foreignKeys: [
-                    {
-                        columnNames: ['ownerId'],
-                        referencedTableName: 'users',
-                        referencedColumnNames: ['id'],
-                        onDelete: 'CASCADE',
-                    },
-                ],
-            }),
-            true,
-        );
-
+        await queryRunner.query(`
+      CREATE TABLE users (
+        id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+        email varchar(255) UNIQUE NOT NULL,
+        password varchar(255) NOT NULL,
+        "firstName" varchar(100) NOT NULL,
+        "lastName" varchar(100) NOT NULL,
+        roles text[] NOT NULL DEFAULT '{user}',
+        "isActive" boolean NOT NULL DEFAULT true,
+        "createdAt" timestamp NOT NULL DEFAULT now(),
+        "updatedAt" timestamp NOT NULL DEFAULT now()
+      );
+      
+      CREATE TABLE accounts (
+        id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+        "accountNumber" varchar(20) UNIQUE NOT NULL,
+        type varchar(50) NOT NULL,
+        balance numeric(15,2) NOT NULL DEFAULT 0,
+        "isActive" boolean NOT NULL DEFAULT true,
+        "userId" uuid REFERENCES users(id) ON DELETE CASCADE,
+        "createdAt" timestamp NOT NULL DEFAULT now(),
+        "updatedAt" timestamp NOT NULL DEFAULT now()
+      );
+      
+      CREATE TABLE transactions (
+        id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+        type varchar(50) NOT NULL,
+        amount numeric(15,2) NOT NULL,
+        description varchar(255),
+        "accountId" uuid REFERENCES accounts(id) ON DELETE CASCADE,
+        "toAccountNumber" varchar(20),
+        "createdAt" timestamp NOT NULL DEFAULT now()
+      );
+    `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('accounts');
-        await queryRunner.dropTable('users');
+        await queryRunner.query(`DROP TABLE transactions`);
+        await queryRunner.query(`DROP TABLE accounts`);
+        await queryRunner.query(`DROP TABLE users`);
     }
 }

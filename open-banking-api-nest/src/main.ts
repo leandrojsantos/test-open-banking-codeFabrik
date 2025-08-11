@@ -1,24 +1,27 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { setupSwagger } from './config/swagger.config';
+import { getValidationPipe } from './config/validation.config';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
-  // Configuração do Swagger
-  const config = new DocumentBuilder()
-    .setTitle('Open Banking API')
-    .setDescription('API Open Banking Application')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  // Configurações
+  app.useGlobalPipes(getValidationPipe());
+  app.setGlobalPrefix('api/v1');
 
-  // Validação global
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  // Swagger
+  setupSwagger(app);
 
-  await app.listen(3000);
+  // CORS
+  app.enableCors({
+    origin: configService.get('CORS_ORIGIN') || '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+
+  await app.listen(configService.get('PORT') || 3000);
 }
 bootstrap();
