@@ -61,7 +61,7 @@ As seguintes ferramentas foram usadas:
 
   - Crie sua branch (git checkout -b feature/newFeature)
 
-  - Commit suas mudanças (git commit -m 'Add some newFeature')
+  - Commit suas mudanças (git commit -m 'feat: descricao breve da newFeature')
 
   - Push para a branch (git push origin feature/newFeature)
 
