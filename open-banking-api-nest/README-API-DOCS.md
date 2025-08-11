@@ -9,155 +9,107 @@
 <p align="center">
  <a href="#funcionalidades">Funcionalidades</a> • 
  <a href="#pré-requisitos">Pré-requisitos</a> •
+ <a href="#tecnologias">Tecnologias</a> •
  <a href="#rodando-o-projeto">Rodando o back-end</a> •
  <a href="#testes">Testes</a> •
- <a href="#tecnologias">Tecnologias</a> •
+ <a href="#considerações-finais">Considerações Finais</a> •
  <a href="#anexos">Anexos</a>
 </p>
 
 ## Funcionalidades
-- [ ] 
-
-
-## Rodando o projeto
-```bash
-
-
-
-```
-
-## Tecnologias
-As seguintes ferramentas foram usadas:
-- 
-
-## Anexos
-Documentação para auxiliar:
-* ...
-
-# Open Banking App
-
-Uma API moderna para Open Banking construída com NestJS, PostgreSQL e Docker.
-
-## Recursos
-
+API para sistema de Open Banking desenvolvida com NestJS, PostgreSQL e Docker.
 - Autenticação JWT
-- Documentação Swagger
-- Testes abrangentes
-- Pronto para Docker
+- Gerenciamento de usuários
+- Criação e gerenciamento de contas bancárias
+- Realização de transações (depósito, saque, transferência)
+- Documentação Swagger integrada
 
-## 💻 Pré-requisitos
+## Pré-requisitos
 Deve ter instalado em sua máquina: 
 - Node.js 18+
 - Docker 20+
 - PostgreSQL 15+
 
-## Testes
+## Tecnologias
+As seguintes ferramentas foram usadas:
+- NestJS
+- TypeORM
+- PostgreSQL
+- Docker
+- Swagger
+- JWT
+- Jest (para testes)
+
+## Rodando o projeto
 ```bash
 
-# Testes unitários
-npm run test
+1. Clone o repositório:
+ $ git clone git@github.com:leandrojsantos/test-open-banking-codeFabrik.git
+ $ cd open-banking-api-nest
 
-# Testes e2e
-npm run test:e2e
+2. Crie um arquivo `.env` baseado no `.env.example`
 
-# Cobertura de testes
-npm run test:cov
+3. Execute `docker-compose up -d` para subir os containers
+
+4. Execute as migrações: `npm run typeorm migration:run`
+
+5. Escolha uma da versões:
+# versão dev
+npm install
+npm run start:dev
+
+# versão produção
+npm run build
+npm run start:prod
+
+6. Acesse a documentação da API em: http://localhost:3000/api 
+    Swagger UI (Rotas da api): http://localhost:3000/api
+    PGAdmin (Banco de dados da api use os dados ".env"): http://localhost:5050
+
+```
+## Testes
+```bash
+# Cobertura de testes em dev
+npm test
+npm run test:cov 
+
+# Cobertura de testes em produção
+npm run build
+npm run start:prod
 
 ```
 
-open-banking-api-nest/
-├── .docker/
-├── .github/
-│   └── workflows/
-│       ├── ci.yml          # Pipeline de CI
-│       └── cd.yml          # Pipeline de CD
-├── src/
-│   ├── auth/               # Módulo de autenticação
-│   │   ├── strategies/
-│   │   │   ├── jwt.strategy.ts *
-│   │   │   └── local.strategy.ts *
-│   │   ├── auth.controller.ts *
-│   │   ├── auth.module.ts *
-│   │   ├── auth.service.ts *
-│   │   └── interfaces/
-│   │       └── jwt-payload.interface.ts *
-│   ├── accounts/           # Módulo de contas bancárias
-│   │   ├── dto/
-│   │   │   ├── create-account.dto.ts *
-│   │   │   └── update-account.dto.ts *
-│   │   ├── entities/
-│   │   │   └── account.entity.ts *
-│   │   ├── accounts.controller.ts *
-│   │   ├── accounts.module.ts *
-│   │   ├── accounts.service.ts *
-│   │   └── accounts.repository.ts *
-│   ├── transactions/       # Módulo de transações
-│   │   ├── dto/
-│   │   │   ├── create-transaction.dto.ts *
-│   │   │   └── transfer.dto.ts *
-│   │   ├── entities/
-│   │   │   └── transaction.entity.ts *
-│   │   ├── transactions.controller.ts *
-│   │   ├── transactions.module.ts *
-│   │   ├── transactions.service.ts *
-│   │   └── transactions.repository.ts *
-│   ├── users/              # Módulo de usuários
-│   │   ├── dto/
-│   │   │   ├── create-user.dto.ts *
-│   │   │   ├── login-user.dto.ts *
-│   │   │   └── update-user.dto.ts *
-│   │   ├── entities/
-│   │   │   └── user.entity.ts *
-│   │   ├── users.controller.ts *
-│   │   ├── users.module.ts *
-│   │   ├── users.service.ts *
-│   │   └── users.repository.ts *
-│   ├── common/             # Utilitários compartilhados
-│   │   ├── decorators/
-│   │   │   ├── roles.decorator.ts *
-│   │   │   └── current-user.decorator.ts *
-│   │   ├── filters/
-│   │   │   └── http-exception.filter.ts *
-│   │   ├── guards/
-│   │   │   └── roles.guard.ts *
-│   │   ├── interceptors/
-│   │   │   └── transform.interceptor.ts *
-│   │   └── utils/
-│   │       └── api-response.util.ts *
-│   ├── config/             # Configurações
-│   │   ├── app.config.ts *
-│   │   ├── database.config.ts *
-│   │   ├── swagger.config.ts *
-│   │   └── validation.config.ts *
-│   ├── app.controller.ts *
-│   ├── app.module.ts *
-│   ├── app.service.ts *
-│   └── main.ts *
-├── test/                   # Testes
-│   ├── auth/
-│   │   ├── auth.controller.spec.ts *
-│   │   └── auth.service.spec.ts *
-│   ├── accounts/
-│   │   ├── accounts.controller.spec.ts *
-│   │   └── accounts.service.spec.ts *
-│   ├── transactions/
-│   │   ├── transactions.controller.spec.ts *
-│   │   └── transactions.service.spec.ts *
-│   ├── users/
-│   │   ├── users.controller.spec.ts *
-│   │   └── users.service.spec.ts *
-│   └── app.e2e-spec.ts *
-├── migrations/             # Migrações do TypeORM
-│   └── 123456789-create-tables.ts *
-├── .env.example *
-├── .eslintrc.js *
-├── .gitignore *
-├── .prettierrc *
-├── docker-compose.yml *
-├── Dockerfile *
-├── jest.config.js *
-├── nest-cli.json *
-├── package.json *
-├── README.md *
-├── tsconfig.build.json *
-└── tsconfig.json *
+## Considerações Finais
+Esta implementação segue boas práticas de desenvolvimento como:
+
+1. **Separação de responsabilidades**: Cada módulo tem sua pasta com controllers, services, entidades e DTOs organizados.
+
+2. **Segurança**: 
+   - Autenticação JWT
+   - Senhas hasheadas com bcrypt
+   - Validação de dados com class-validator
+
+3. **Documentação**: 
+   - Swagger integrado
+   - Documentação no código
+   - README completo
+
+4. **Testabilidade**: 
+   - Módulos independentes
+   - Injeção de dependências
+   - Configuração do Jest
+
+5. **Escalabilidade**: 
+   - Docker para ambiente isolado
+   - TypeORM para abstração do banco de dados
+   - Configurações centralizadas
+
+6. **Boas práticas de código**: 
+   - Tipagem forte
+   - Tratamento de erros
+   - DTOs para validação
+   - Interfaces claras
+
+
+## Anexos
+Documentação para auxiliar:
