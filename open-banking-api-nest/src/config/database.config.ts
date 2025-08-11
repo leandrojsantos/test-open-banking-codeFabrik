@@ -1,7 +1,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 
-export const getTypeOrmConfig = async (
+export const getDatabaseConfig = async (
     configService: ConfigService,
 ): Promise<TypeOrmModuleOptions> => ({
     type: 'postgres',
@@ -11,11 +11,10 @@ export const getTypeOrmConfig = async (
     password: configService.get('DB_PASSWORD'),
     database: configService.get('DB_NAME'),
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    synchronize: process.env.NODE_ENV !== 'production',
-    logging: true,
-    migrationsRun: true,
-    migrations: [__dirname + '/../migrations/**/*{.ts,.js}'],
+    synchronize: configService.get('NODE_ENV') === 'development',
+    logging: configService.get('NODE_ENV') === 'development',
+    migrations: [__dirname + '/../migrations/*{.ts,.js}'],
     cli: {
-        migrationsDir: 'src/migrations',
+        migrationsDir: 'migrations',
     },
 });

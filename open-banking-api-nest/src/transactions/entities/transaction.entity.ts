@@ -1,16 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Account } from '../accounts/entities/account.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Account } from '../../accounts/entities/account.entity';
+import { TransactionType } from '../enums/transaction-type.enum';
 
 @Entity()
 export class Transaction {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column('decimal', { precision: 15, scale: 2 })
-    amount: number;
+    @Column({ type: 'enum', enum: TransactionType })
+    type: TransactionType;
 
-    @Column()
-    type: 'deposit' | 'withdrawal' | 'transfer';
+    @Column({ type: 'decimal', precision: 15, scale: 2 })
+    amount: number;
 
     @Column({ nullable: true })
     description: string;
@@ -18,6 +19,9 @@ export class Transaction {
     @ManyToOne(() => Account, (account) => account.transactions)
     account: Account;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @Column({ nullable: true })
+    toAccountNumber: string;
+
+    @CreateDateColumn()
     createdAt: Date;
 }

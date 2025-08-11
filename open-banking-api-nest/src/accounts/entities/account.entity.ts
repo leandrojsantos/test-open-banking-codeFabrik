@@ -1,23 +1,30 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { User } from '../../users/user.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { User } from '../../users/entities/user.entity';
+import { AccountType } from '../enums/account-type.enum';
 
 @Entity()
 export class Account {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar', length: 20, unique: true })
+  @Column({ unique: true })
   accountNumber: string;
+
+  @Column({ type: 'enum', enum: AccountType })
+  type: AccountType;
 
   @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
   balance: number;
 
-  @Column({ type: 'varchar', length: 50 })
-  type: 'checking' | 'savings' | 'investment';
+  @Column({ default: true })
+  isActive: boolean;
 
   @ManyToOne(() => User, (user) => user.accounts)
-  owner: User;
+  user: User;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

@@ -1,5 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Account } from '../accounts/entities/account.entity';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    OneToMany,
+} from 'typeorm';
+import { Account } from '../../accounts/entities/account.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -10,6 +18,7 @@ export class User {
     email: string;
 
     @Column()
+    @Exclude()
     password: string;
 
     @Column()
@@ -21,6 +30,15 @@ export class User {
     @Column({ default: true })
     isActive: boolean;
 
-    @OneToMany(() => Account, (account) => account.owner)
+    @Column({ type: 'simple-array', default: ['user'] })
+    roles: string[];
+
+    @OneToMany(() => Account, (account) => account.user)
     accounts: Account[];
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
 }
