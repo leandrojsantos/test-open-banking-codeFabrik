@@ -6,8 +6,12 @@
       "@nestjs/swagger/plugin"
     ],
     "assets": [
-      "**/*.graphql"
+      {
+        "include": "**/*.graphql",
+        "watchAssets": true
+      }
     ],
-    "watchAssets": true
+    "webpack": false,
+    "tsConfigPath": "tsconfig.build.json"
   }
 }
