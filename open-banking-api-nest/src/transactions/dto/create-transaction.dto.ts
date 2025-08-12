@@ -1,15 +1,16 @@
-import { IsEnum, IsNumber, IsPositive, IsString, IsOptional } from 'class-validator';
-import { TransactionType } from '../enums/transaction-type.enum';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { TransactionType } from '../entities/transaction.entity';
 
 export class CreateTransactionDto {
-    @IsEnum(TransactionType)
-    type: TransactionType;
+    @IsNotEmpty()
+    accountId: string;
 
     @IsNumber()
-    @IsPositive()
     amount: number;
 
     @IsString()
-    @IsOptional()
+    type: TransactionType;
+
+    @IsString()
     description?: string;
 }

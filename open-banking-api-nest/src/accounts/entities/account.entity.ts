@@ -1,30 +1,21 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { AccountType } from '../enums/account-type.enum';
+import { Transaction } from '../../transactions/entities/transaction.entity';
 
 @Entity()
 export class Account {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column()
   accountNumber: string;
 
-  @Column({ type: 'enum', enum: AccountType })
-  type: AccountType;
-
-  @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  @Column({ type: 'decimal', precision: 15, scale: 2 })
   balance: number;
-
-  @Column({ default: true })
-  isActive: boolean;
 
   @ManyToOne(() => User, (user) => user.accounts)
   user: User;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @OneToMany(() => Transaction, (transaction) => transaction.account)
+  transactions: Transaction[];
 }

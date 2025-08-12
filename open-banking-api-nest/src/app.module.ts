@@ -5,21 +5,28 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { AccountsModule } from './accounts/accounts.module';
 import { TransactionsModule } from './transactions/transactions.module';
-import { getDatabaseConfig } from './config/database.config';
 import { AppController } from './app.controller';
+import { getTypeOrmConfig } from './config/database.config';
 
 @Module({
     imports: [
-        ConfigModule.forRoot({ isGlobal: true }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
-            useFactory: getDatabaseConfig,
+            useFactory: getTypeOrmConfig, // Alterado para getTypeOrmConfig
         }),
         UsersModule,
         AuthModule,
         AccountsModule,
         TransactionsModule,
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: '.env',
+        }),
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: '.env', // Removido duplicado
+        }),
     ],
     controllers: [AppController],
     providers: [],

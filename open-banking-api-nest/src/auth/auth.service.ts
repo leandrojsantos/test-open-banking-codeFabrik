@@ -1,16 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { LoginUserDto } from '../users/dto/login-user.dto';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly usersService: UsersService,
-        private readonly jwtService: JwtService,
+        private readonly jwtService: JwtService
     ) { }
 
-    async login(loginUserDto: LoginUserDto) {
-        return this.usersService.validateUser(loginUserDto);
+    async validateUser(email: string, password: string): Promise<any> {
+        const user = await this.usersService.findOneByEmail(email);
+        // Adicione sua lógica de validação de senha aqui
+        return user;
+    }
+
+    async login(user: any) {
+        const payload = { email: user.email, sub: user.id };
+        return {
+            access_token: this.jwtService.sign(payload),
+        };
     }
 }
