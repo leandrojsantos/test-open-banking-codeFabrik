@@ -1,65 +1,57 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from '../../src/auth/auth.service';
-import { UsersService } from '../../src/users/users.service';
-import { JwtService } from '@nestjs/jwt';
-import { LoginUserDto } from '../../src/users/dto/login-user.dto';
-import { UnauthorizedException } from '@nestjs/common';
+import { AccountsService } from '../../src/accounts/accounts.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Account } from '../../src/accounts/entities/account.entity';
+import { User } from '../../src/users/entities/user.entity';
+import { AccountsRepository } from '../../src/accounts/accounts.repository';
+import { CreateAccountDto } from '../../src/accounts/dto/create-account.dto';
 
-describe('AuthService', () => {
-    let authService: AuthService;
-    let usersService: UsersService;
-    let jwtService: JwtService;
+describe('AccountsService', () => {
+    let service: AccountsService;
+    let accountsRepository: AccountsRepository;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
-                AuthService,
+                AccountsService,
                 {
-                    provide: UsersService,
-                    useValue: {
-                        validateUser: jest.fn(),
-                    },
+                    provide: getRepositoryToken(Account),
+                    useClass: AccountsRepository,
                 },
                 {
-                    provide: JwtService,
-                    useValue: {
-                        sign: jest.fn().mockReturnValue('mockToken'),
-                    },
+                    provide: getRepositoryToken(User),
+                    useValue: {},
                 },
             ],
         }).compile();
 
-        authService = module.get<AuthService>(AuthService);
-        usersService = module.get<UsersService>(UsersService);
-        jwtService = module.get<JwtService>(JwtService);
+        service = module.get<AccountsService>(AccountsService);
+        accountsRepository = module.get<AccountsRepository>(getRepositoryToken(Account));
     });
 
-    describe('login', () => {
-        it('should return user and token when credentials are valid', async () => {
-            const mockUser = { id: '1', email: 'test@test.com', password: 'hashed' };
-            const loginDto: LoginUserDto = { email: 'test@test.com', password: 'password' };
+    describe('create', () => {
+        it('should create an account successfully', async () => {
+            const createAccountDto: CreateAccountDto = { type: 'CHECKING' };
+            const userId = 'user123';
+            const mockAccount = new Account();
 
-            jest.spyOn(usersService, 'validateUser').mockResolvedValue({
-                user: mockUser,
-                token: 'mockToken',
-            });
+            jest.spyOn(accountsRepository, 'createAccount').mockResolvedValue(mockAccount);
 
-            const result = await authService.login(loginDto);
-            expect(result).toEqual({
-                user: mockUser,
-                token: 'mockToken',
-            });
-            expect(usersService.validateUser).toHaveBeenCalledWith(loginDto);
+            const result = await service.create(createAccountDto, userId);
+            expect(result).toBe(mockAccount);
         });
+    });
 
-        it('should throw UnauthorizedException when credentials are invalid', async () => {
-            const loginDto: LoginUserDto = { email: 'test@test.com', password: 'wrong' };
+    describe('findAllByUser', () => {
+        it('should return accounts for user', async () => {
+            const userId = 'user123';
+            const mockAccounts = [new Account(), new Account()];
 
-            jest.spyOn(usersService, 'validateUser').mockRejectedValue(
-                new UnauthorizedException('Invalid credentials'),
-            );
+            jest.spyOn(accountsRepository, 'findByUser').mockResolvedValue(mockAccounts);
 
-            await expect(authService.login(loginDto)).rejects.toThrow(UnauthorizedException);
+            const result = await service.findAllByUser(userId);
+            expect(result).toEqual(mockAccounts);
+            expect(accountsRepository.findByUser).toHaveBeenCalledWith(userId);
         });
     });
 });
