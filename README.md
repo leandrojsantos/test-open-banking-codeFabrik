@@ -20,9 +20,41 @@ Desenvolvimento de um backend robusto para Open Banking, aplicando boas prática
 
 ## 🎨 Layout
 
-<p align="center" style="display: flex; align-items: flex-start; justify-content: center;">
-  <img alt="img1" title="#img1" src="./open-banking-api-nest/src/common/image/" width="400px">
-</p>
+
+### Componentes Chave
+
+```mermaid
+flowchart TD
+    A[Cliente] --> B{API Gateway}
+    B --> C[AuthModule]
+    B --> D[UsersModule]
+    B --> E[AccountsModule]
+    B --> F[TransactionsModule]
+    
+    C --> G[(Database)]
+    D --> G
+    E --> G
+    F --> G
+    
+    subgraph NestJS
+        C -->|JWT| H[Guards]
+        D --> I[Services]
+        E --> I
+        F --> I
+        I --> J[Repositories]
+        J --> G
+    end
+```
+
+Este diagrama mostra:
+1. **Separação clara de módulos**
+2. **Fluxo unidirecional de dados**
+3. **Hierarquia de componentes**
+4. **Integração com banco de dados**
+5. **Proteção das rotas via JWT**
+
+
+  
 
 
 ### ⚙️ Rodando o projeto
@@ -54,12 +86,12 @@ npm run start:prod
 
 ## 🛠️ Tecnologias
 As seguintes ferramentas foram usadas:
-- [ ] API REST com Nest
-- [ ] Testes com Jest
-- [ ] Containerização com Docker
-- [ ] Banco de dados relacional com PostgreSQL
-- [ ] Documentação da API na pasta "open-banking-api-nest"
-- [ ] Usabilidade da API, código limpo e padrão de projeto
+- [x] API REST com Nest
+- [x] Testes com Jest
+- [x] Containerização com Docker
+- [x] Banco de dados relacional com PostgreSQL
+- [x] Documentação da API na pasta "open-banking-api-nest"
+- [x] Usabilidade da API, código limpo e padrão de projeto
 
 ## 📜 Contribuição
 
