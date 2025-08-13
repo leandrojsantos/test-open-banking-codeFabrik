@@ -5,7 +5,7 @@ import { AuthModule } from './src/auth/auth.module';
 import { UsersModule } from './src/users/users.module';
 import { AccountsModule } from './src/accounts/accounts.module';
 import { TransactionsModule } from './src/transactions/transactions.module';
-import { getTypeOrmConfig } from './config/database.config';
+import { getTypeOrmConfig } from '@config/database.config';
 
 @Module({
     imports: [

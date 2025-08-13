@@ -11,7 +11,7 @@ import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
-import { User } from '../users/entities/user.entity';
+import { User } from '@users/entities/user.entity';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('accounts')

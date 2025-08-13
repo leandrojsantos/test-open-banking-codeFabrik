@@ -17,6 +17,14 @@
     "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "@config/*": [
+        "src/config/*"
+      ],
+      "@users/*": [
+        "src/users/*"
+      ]
+    }
   }
 }

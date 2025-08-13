@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AccountsService } from '../../src/accounts/accounts.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Account } from '../../src/accounts/entities/account.entity';
-import { User } from '../../src/users/entities/user.entity';
+import { User } from '@users/entities/user.entity';
 import { AccountsRepository } from '../../src/accounts/accounts.repository';
 import { CreateAccountDto } from '../../src/accounts/dto/create-account.dto';
 

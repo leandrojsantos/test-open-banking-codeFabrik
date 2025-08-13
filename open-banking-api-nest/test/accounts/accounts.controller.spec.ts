@@ -5,8 +5,7 @@ import { CreateAccountDto } from '../../src/accounts/dto/create-account.dto';
 import { Account } from '../../src/accounts/entities/account.entity';
 import { JwtAuthGuard } from '../../src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../src/common/guards/roles.guard';
-import { CurrentUser } from '../../src/common/decorators/current-user.decorator';
-import { User } from '../../src/users/entities/user.entity';
+import { User } from '@users/entities/user.entity';
 
 describe('AccountsController', () => {
     let controller: AccountsController;

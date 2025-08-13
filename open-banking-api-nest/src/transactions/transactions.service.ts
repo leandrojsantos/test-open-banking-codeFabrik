@@ -14,9 +14,9 @@ export class TransactionsService {
         private readonly accountRepository: Repository<Account>,
     ) { }
 
-    async create(createTransactionDto: CreateTransactionDto): Promise<Transaction> {
+    async create(createTransactionDto: CreateTransactionDto) {
         const account = await this.accountRepository.findOne({
-            where: { id: createTransactionDto.accountId }
+            where: { id: createTransactionDto.accountId },
         });
 
         if (!account) {
@@ -25,9 +25,16 @@ export class TransactionsService {
 
         const transaction = this.transactionRepository.create({
             ...createTransactionDto,
-            account
+            account,
         });
 
         return this.transactionRepository.save(transaction);
+    }
+
+    async findAllByAccount(accountId: string) {
+        return this.transactionRepository.find({
+            where: { account: { id: accountId } },
+            relations: ['account'],
+        });
     }
 }

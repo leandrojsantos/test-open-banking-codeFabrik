@@ -3,7 +3,7 @@ import { TransactionsController } from '../../src/transactions/transactions.cont
 import { TransactionsService } from '../../src/transactions/transactions.service';
 import { CreateTransactionDto } from '../../src/transactions/dto/create-transaction.dto';
 import { TransferDto } from '../../src/transactions/dto/transfer.dto';
-import { User } from '../../src/users/entities/user.entity';
+import { User } from '@users/entities/user.entity';
 
 describe('TransactionsController', () => {
     let controller: TransactionsController;
@@ -15,6 +15,8 @@ describe('TransactionsController', () => {
         password: 'hashed',
         firstName: 'Test',
         lastName: 'User',
+        accounts: [],
+        roles: [],
     } as User;
 
     beforeEach(async () => {

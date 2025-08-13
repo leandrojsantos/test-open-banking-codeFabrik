@@ -3,22 +3,18 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Instala as dependências globais necessárias
-RUN apk add --no-cache python3 make g++
+# Instala dependências de compilação
+RUN apk add --no-cache python3 make g++ curl
 
-# Copia os arquivos de configuração
-COPY package.json yarn.lock tsconfig.json nest-cli.json ./
+# Copia arquivos de configuração
+COPY package.json yarn.lock tsconfig.json tsconfig.build.json nest-cli.json ./
 
-# Instala as dependências com Yarn
-RUN yarn config set ignore-engines true && \
-    yarn install --frozen-lockfile --network-timeout 1000000
+# Instala dependências
+RUN yarn install --frozen-lockfile
 
-# Copia o resto da aplicação
-COPY . .
-
-# Verifica a estrutura antes do build
-RUN ls -la src/users/entities/ && \
-    ls -la src/config/
+# Copia o restante do código
+COPY src ./src
+COPY .env ./
 
 # Build da aplicação
 RUN yarn build
@@ -28,12 +24,11 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-# Copia os arquivos necessários do estágio builder
+# Copia apenas o necessário
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
-COPY --from=builder /app/yarn.lock ./
+COPY --from=builder /app/.env ./
 
-# Expõe a porta e inicia a aplicação
 EXPOSE 3000
 CMD ["yarn", "start:prod"]
