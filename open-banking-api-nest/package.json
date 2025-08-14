@@ -1,10 +1,10 @@
 {
   "name": "open-banking-api-nest",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "version": "1.1.1",
+  "description": "api para open banking utilizando nestjs",
+  "author": "leandrojsantos",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "engines": {
     "node": ">=20.0.0",
     "yarn": ">=1.22.0"
@@ -24,7 +24,10 @@
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down -v",
-    "docker:logs": "docker-compose logs -f"
+    "docker:logs": "docker-compose logs -f",
+    "typeorm": "typeorm-ts-node-esm",
+    "migration:generate": "yarn typeorm migration:generate -d src/data-source.ts",
+    "migration:run": "yarn typeorm migration:run -d src/data-source.ts"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",

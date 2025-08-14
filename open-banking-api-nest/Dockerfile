@@ -1,38 +1,56 @@
-# Estágio de construção
+# =============================================
+# ESTÁGIO DE CONSTRUÇÃO (builder)
+# =============================================
 FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Instala dependências de compilação
-RUN apk add --no-cache python3 make g++ curl
+# 1. Instala dependências
+RUN apk add --no-cache python3 make g++ postgresql-client
 
-# Copia arquivos de configuração
+# 2. Copia arquivos de configuração
 COPY package.json yarn.lock tsconfig.json tsconfig.build.json nest-cli.json ./
 
-# Instala dependências
+# 3. Instala dependências
 RUN yarn install --frozen-lockfile
 
-# Copia o restante do código
-COPY src ./src
-COPY .env* ./ 
+# 4. Copia TUDO (incluindo .env e migrations)
+COPY . .
+
+# 5. Garante que .env existe (cria vazio se necessário)
 RUN if [ ! -f .env ]; then \
-    echo "WARNING: .env file not found, using .env.example"; \
-    cp .env.example .env 2>/dev/null || touch .env; \
+    touch .env && \
+    echo "WARNING: Arquivo .env vazio criado automaticamente" >&2; \
     fi
 
-# Build da aplicação
+# 6. Build da aplicação
 RUN yarn build
 
-# Estágio de produção
+# =============================================
+# ESTÁGIO DE PRODUÇÃO
+# =============================================
 FROM node:22-alpine
 
 WORKDIR /app
 
-# Copia apenas o necessário
+# 7. Instala dependências para operação
+RUN apk add --no-cache postgresql-client bash
+
+# 8. Copia artefatos do estágio builder
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
+
+# 9. SOLUÇÃO PRIMÁRIA: Copia .env explicitamente
 COPY --from=builder /app/.env ./
 
+# 10. SOLUÇÃO ALTERNATIVA (Se o erro persistir ⚠️)
+# RUN touch .env  # Descomente esta linha se a cópia falhar
+
+# 11. Configura entrypoint
+COPY scripts/run-migrations.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/run-migrations.sh
+
 EXPOSE 3000
+ENTRYPOINT ["run-migrations.sh"]
 CMD ["yarn", "start:prod"]

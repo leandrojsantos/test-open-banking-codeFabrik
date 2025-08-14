@@ -114,18 +114,17 @@ As seguintes tecnologias foram usadas:
 
 2. Crie um arquivo `.env` baseado no `.env.example`
 
-3. Execute `docker-compose up -d` para subir os containers
+3. Execute `docker compose build --no-cache && docker compose up -d` para subir os containers
 
-4. Execute as migrações: `npm run typeorm migration:run`
+4. Execute as migrações: `yarn typeorm migration:run -d src/data-source.ts`
 
 5. Escolha uma da versões:
 # versão dev
-npm install
-npm run start:dev
-
+yarn install
+yarn run start:dev
 # versão produção
-npm run build
-npm run start:prod
+yarn run build
+yarn run start:prod
 
 6. Acesse a documentação em:
     - API : http://localhost:3000/api 
