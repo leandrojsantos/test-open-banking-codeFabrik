@@ -1,15 +1,14 @@
-import { getTypeOrmConfig } from '@config/database.config'; // Caminho correto absorvido pelo alias no tsconfig.json
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
     imports: [
-        TypeOrmModule.forRootAsync({
-            useFactory: getTypeOrmConfig,
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: '.env',
         }),
-
-        UsersModule,                          // Importe o UsersModule
+        UsersModule,
     ],
 })
 export class AppModule { }

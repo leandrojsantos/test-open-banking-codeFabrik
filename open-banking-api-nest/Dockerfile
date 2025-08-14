@@ -14,7 +14,11 @@ RUN yarn install --frozen-lockfile
 
 # Copia o restante do código
 COPY src ./src
-COPY .env ./
+COPY .env* ./ 
+RUN if [ ! -f .env ]; then \
+    echo "WARNING: .env file not found, using .env.example"; \
+    cp .env.example .env 2>/dev/null || touch .env; \
+    fi
 
 # Build da aplicação
 RUN yarn build
