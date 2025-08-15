@@ -24,7 +24,22 @@
       ],
       "@users/*": [
         "src/users/*"
-      ]
+      ],
+      "@entities/*": [
+        "src/entities/*"
+      ],
+      "@common/*": [
+        "src/common/*"
+      ],
+      "@auth/*": [
+        "src/auth/*"
+      ],
+      "@accounts/*": [
+        "src/accounts/*"
+      ],
+      "@transactions/*": [
+        "src/transactions/*"
+      ],
     }
   }
 }

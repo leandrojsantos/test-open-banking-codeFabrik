@@ -14,17 +14,19 @@ COPY package.json yarn.lock tsconfig.json tsconfig.build.json nest-cli.json ./
 # 3. Instala dependências
 RUN yarn install --frozen-lockfile
 
-# 4. Copia TUDO (incluindo .env e migrations)
+# 4. Copia TUDO (estrutura completa)
 COPY . .
 
-# 5. Garante que .env existe (cria vazio se necessário)
+# 5. Garante que .env existe
 RUN if [ ! -f .env ]; then \
     touch .env && \
     echo "WARNING: Arquivo .env vazio criado automaticamente" >&2; \
     fi
 
-# 6. Build da aplicação
-RUN yarn build
+# 6. Build da aplicação (com verificação de pastas)
+RUN yarn build && \
+    ([ -d "src/entities" ] && cp -r src/entities dist/src/ || echo "Pasta src/entities não encontrada, pulando...") && \
+    ([ -d "src/users/entities" ] && cp -r src/users/entities dist/src/users/ || echo "Pasta src/users/entities não encontrada, pulando...")
 
 # =============================================
 # ESTÁGIO DE PRODUÇÃO
@@ -40,16 +42,16 @@ RUN apk add --no-cache postgresql-client bash
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
-
-# 9. SOLUÇÃO PRIMÁRIA: Copia .env explicitamente
 COPY --from=builder /app/.env ./
 
-# 10. SOLUÇÃO ALTERNATIVA (Se o erro persistir ⚠️)
-# RUN touch .env  # Descomente esta linha se a cópia falhar
-
-# 11. Configura entrypoint
+# 9. Configura entrypoint
 COPY scripts/run-migrations.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/run-migrations.sh
+
+# 10. Instala tsconfig-paths se necessário
+RUN if [ ! -d "node_modules/tsconfig-paths" ]; then \
+    yarn add tsconfig-paths; \
+    fi
 
 EXPOSE 3000
 ENTRYPOINT ["run-migrations.sh"]

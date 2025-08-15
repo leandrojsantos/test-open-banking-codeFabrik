@@ -11,10 +11,8 @@
   },
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "start:prod": "NODE_ENV=production node -r tsconfig-paths/register dist/main.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -26,8 +24,10 @@
     "docker:down": "docker-compose down -v",
     "docker:logs": "docker-compose logs -f",
     "typeorm": "typeorm-ts-node-esm",
-    "migration:generate": "yarn typeorm migration:generate -d src/data-source.ts",
-    "migration:run": "yarn typeorm migration:run -d src/data-source.ts"
+    "migration:run": "typeorm migration:run -d ormconfig.js",
+    "migration:generate": "typeorm migration:generate src/migrations/NomeMigration -d ormconfig.js",
+    "build": "nest build && tsc -p tsconfig.build.json",
+    "start:prod": "node -r tsconfig-paths/register dist/src/main.js"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",

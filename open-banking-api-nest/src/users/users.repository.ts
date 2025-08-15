@@ -1,8 +1,13 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from '@users/entities/user.entity';
+import { Injectable } from '@nestjs/common';
 
-@EntityRepository(User)
+@Injectable()
 export class UsersRepository extends Repository<User> {
+    constructor(private dataSource: DataSource) {
+        super(User, dataSource.createEntityManager());
+    }
+
     async createUser(userData: {
         email: string;
         password: string;
@@ -11,9 +16,19 @@ export class UsersRepository extends Repository<User> {
         const user = this.create({
             email: userData.email,
             password: userData.password,
-            roles: userData.roles || [],
+            roles: userData.roles || ['user'],
         });
 
-        return this.save(user);
+        await this.save(user);
+        return user;
+    }
+
+    // Métodos adicionais podem ser incluídos aqui
+    async findByEmail(email: string): Promise<User | undefined> {
+        return (await this.findOne({ where: { email } })) ?? undefined;
+    }
+
+    async findById(id: string): Promise<User | undefined> {
+        return (await this.findOne({ where: { id } })) ?? undefined;
     }
 }
