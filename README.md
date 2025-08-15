@@ -1,55 +1,109 @@
-# O trabalho por aqui
+<h1 align="center">
+    <a href="#" alt=""> Open Banking Application </a>
+</h1>
 
-Que tal fazer parte de um time com atitude? Participar de uma das maiores disrupções no mercado? Ter a oportunidade de trabalhar com tecnologias e conceitos inovadores, como:
+<h4 align="center">
+	🚧 Em produção 🚧
+</h4>
 
-* Práticas ágeis como Kanban / Scrum
-* Blockchain
-* AWS
-* Escalabilidade
-* Micro services e aplicações distribuídas
-* Git
-* AngularJs/React/Vue
-* Material Design
-* TDD
-* BDD
+<p align="center" >
+ <a href="#sobre-o-projeto"> 📌 Sobre o projeto</a> •
+ <a href="#layout">Layout</a> • 
+ <a href="#rodando-o-projeto">Rodando o projeto</a> •
+ <a href="#tecnologias">Tecnologias</a> •
+ <a href="#contribuição">Contribuição</a>
+</p>
 
-# Tecnologias/Padrões
+## 📂 Sobre o projeto
+Desenvolvimento de um backend robusto para Open Banking, aplicando boas práticas de engenharia de software com ênfase em usabilidade, código limpo e documentação completa.
 
-Devem ser utilizadas as seguintes tecnologias :
 
-* Qualquer Framework de estilo 
-* Vue.js, React ou Angular 2+
-* Flux (Redux, Vuex, etc)
-* Testes (Que achar necessário) 
-* Qualquer tecnologia ou padrão complementar as citadas anteriormente são permitidas com as devidas justificativas no README.
+## 🎨 Layout
 
-# A Prova
-## Crie um Open Banking Application e uma API em NestJS, C# ou NodeJS, theme de layout e cores é livre!
 
-API: Criar metodos: GET, POST, PUT e DELETE
+### Componentes Chave
 
-Qualquer funcionalidade extra é bem vinda para agregar na solução básica proposta.
+```mermaid
+flowchart TD
+    A[Cliente] --> B{API Gateway}
+    B --> C[AuthModule]
+    B --> D[UsersModule]
+    B --> E[AccountsModule]
+    B --> F[TransactionsModule]
+    
+    C --> G[(Database)]
+    D --> G
+    E --> G
+    F --> G
+    
+    subgraph NestJS
+        C -->|JWT| H[Guards]
+        D --> I[Services]
+        E --> I
+        F --> I
+        I --> J[Repositories]
+        J --> G
+    end
+```
 
-O layout e por sua conta, seja criativo.
-A arquitetura é por sua conta, seja esperto. 
+Este diagrama mostra:
+1. **Separação clara de módulos**
+2. **Fluxo unidirecional de dados**
+3. **Hierarquia de componentes**
+4. **Integração com banco de dados**
+5. **Proteção das rotas via JWT**
 
-Você será avaliado pela qualidade do código, pela modularidade, pela legibilidade, pela criatividade, pela quantidade de funcionalidades básicas e extra.
 
-Não esqueça da otimização de velocidade da App nem da experiência do usuário.
+  
 
-Prazo 1 semana.
 
-# Arquitetura da solução/O que fazer
+### ⚙️ Rodando o projeto
+```bash
 
-No arquivo README do projeto explique o funcionamento e a solução adotada na sua implementação do desafio.
+1. Clone o repositório:
+ $ git clone git@github.com:leandrojsantos/test-open-banking-codeFabrik.git
+ $ cd open-banking-api-nest
 
-## Avaliação
+2. Crie um arquivo `.env` baseado no `.env.example`
 
-Entre os critérios de avaliação estão:
+3. Execute `docker compose build --no-cache && docker compose up -d` para subir os containers
 
-* Usabilidade
-* Criatividade
-* Código limpo e organização
-* Documentação de código
-* Documentação do projeto (readme)
+4. Execute as migrações: `yarn typeorm migration:run -d src/data-source.ts`
 
+5. Escolha uma da versões:
+# versão dev
+yarn install
+yarn run start:dev
+# versão produção
+yarn run build
+yarn run start:prod
+
+6. Acesse a documentação em:
+    - API : http://localhost:3000/api 
+    - Swagger UI (Rotas da api): http://localhost:3000/api
+    - PGAdmin (Banco de dados da api use os dados ".env"): http://localhost:5050
+    - Health Check: http://localhost:3000/health
+
+
+```
+
+## 🛠️ Tecnologias
+As seguintes ferramentas foram usadas:
+- [x] API REST com Nest
+- [x] Testes com Jest
+- [x] Containerização com Docker
+- [x] Banco de dados relacional com PostgreSQL
+- [x] Documentação da API na pasta "open-banking-api-nest"
+- [x] Usabilidade da API, código limpo e padrão de projeto
+
+## 📜 Contribuição
+
+  Faça um fork do projeto em seguida:
+
+  1. Crie sua branch (git checkout -b feature/newFeature)
+
+  2. Commit suas mudanças (git commit -m 'feat: descricao breve da newFeature')
+
+  3. Push para a branch (git push origin feature/newFeature)
+
+  4. Abra um Pull Request no github
