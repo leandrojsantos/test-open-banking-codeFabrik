@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DataSource } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -9,28 +9,35 @@ import { UsersModule } from './users/users.module';
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: '.env',
+            ignoreEnvFile: process.env.NODE_ENV === 'production',
         }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
-            useFactory: (configService: ConfigService) => ({
-                type: 'postgres',
-                host: configService.get('DB_HOST'),
-                port: configService.get<number>('DB_PORT'),
-                username: configService.get('DB_USER'),
-                password: configService.get('DB_PASSWORD'),
-                database: configService.get('DB_NAME'),
-                entities: [__dirname + '/**/*.entity{.ts,.js}'],
-                migrations: [__dirname + '/../migrations/*{.ts,.js}'],
-                synchronize: configService.get('NODE_ENV') !== 'production',
-                logging: configService.get('NODE_ENV') !== 'production',
-                autoLoadEntities: true,
-            }),
+            useFactory: (configService: ConfigService) => {
+                const options: DataSourceOptions = {
+                    type: 'postgres',
+                    host: configService.get<string>('DB_HOST', 'db'),
+                    port: configService.get<number>('DB_PORT', 5432),
+                    username: configService.get<string>('DB_USER', 'postgres'),
+                    password: configService.get<string>('DB_PASSWORD', 'senhasegura'),
+                    database: configService.get<string>('DB_NAME', 'open_banking'),
+                    entities: [__dirname + '/**/*.entity{.ts,.js}'],
+                    migrations: [__dirname + '/migrations/*{.ts,.js}'],
+                    synchronize: configService.get<string>('NODE_ENV') === 'development',
+                    logging: configService.get<string>('NODE_ENV') !== 'production',
+                    migrationsRun: configService.get<string>('NODE_ENV') === 'production',
+                    poolSize: 10,
+                    connectTimeoutMS: 2000,
+                };
+                return options;
+            },
             dataSourceFactory: async (options) => {
                 if (!options) {
-                    throw new Error('DataSource options are undefined');
+                    throw new Error('Invalid DB options');
                 }
                 const dataSource = await new DataSource(options).initialize();
+                await dataSource.runMigrations(); // Executa migrações automaticamente
                 return dataSource;
             },
         }),
@@ -39,9 +46,9 @@ import { UsersModule } from './users/users.module';
     providers: [
         {
             provide: DataSource,
-            useFactory: (dataSource: DataSource) => dataSource,
-            inject: ['DATA_SOURCE'],
+            useExisting: DataSource, // Usa a instância já criada
         },
     ],
+    exports: [TypeOrmModule],
 })
 export class AppModule { }
