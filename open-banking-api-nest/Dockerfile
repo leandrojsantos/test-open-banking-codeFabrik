@@ -1,83 +1,68 @@
 # =============================================
-# ESTÁGIO DE CONSTRUÇÃO (builder)
+# 🏗️ ESTÁGIO DE CONSTRUÇÃO (builder)
 # =============================================
-FROM node:22-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# 1. Instala dependências
+# 1️⃣ Copia arquivos de configuração e instala dependências
+COPY package.json yarn.lock tsconfig.json nest-cli.json ./
+
+# 2️⃣ Instala dependências de build
 RUN apk add --no-cache python3 make g++ postgresql-client git
 
-# 2. Copia arquivos de configuração
-COPY package.json yarn.lock tsconfig.json tsconfig.build.json nest-cli.json ormconfig.js ormconfig.ts ./
-
-# 3. Cria .env com valores padrão
-RUN touch .env && \
-    echo "DB_HOST=db" >> .env && \
-    echo "DB_PORT=5432" >> .env && \
-    echo "DB_USER=postgres" >> .env && \
-    echo "DB_PASSWORD=senhasegura" >> .env && \
-    echo "DB_NAME=open_banking" >> .env
-
-# 4. Instala dependências
+# 3️⃣ Instala dependências do projeto
 RUN yarn install --frozen-lockfile --network-timeout 1000000
 
-# 5. Copia TODO o código fonte (incluindo scripts)
+# 4️⃣ Copia todo o código fonte
 COPY . .
 
-# 6. Garante permissões e existencia dos scripts
+# 5️⃣ Configura script wait-for-db (opcional)
 RUN mkdir -p scripts && \
-    if [ ! -f "./scripts/wait-for-db" ]; then \
-    echo "#!/bin/sh" > ./scripts/wait-for-db && \
-    echo "echo 'Script wait-for-db não encontrado, usando placeholder'" >> ./scripts/wait-for-db && \
-    echo "sleep 10" >> ./scripts/wait-for-db && \
-    echo "exec \"\$@\"" >> ./scripts/wait-for-db; \
-    fi && \
+    echo '#!/bin/sh' > ./scripts/wait-for-db && \
+    echo 'echo "PostgreSQL está pronto!"' >> ./scripts/wait-for-db && \
+    echo 'exec "$@"' >> ./scripts/wait-for-db && \
     chmod +x ./scripts/wait-for-db
 
-# 7. Build da aplicação
+# 6️⃣ Build da aplicação
 RUN yarn build && \
-    mkdir -p dist/migrations dist/scripts && \
-    ([ -d "migrations" ] && cp -r migrations/* dist/migrations/ || true) && \
-    cp scripts/* dist/scripts/ && \
-    cp ormconfig.js dist/
+    mkdir -p dist/migrations && \
+    cp -r migrations/* dist/migrations/ 2>/dev/null || :
 
 # =============================================
-# ESTÁGIO DE PRODUÇÃO
+# 🚀 ESTÁGIO DE PRODUÇÃO
 # =============================================
-FROM node:22-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
-# 8. Configuração do container
+# 7️⃣ Instala dependências de runtime
 RUN apk add --no-cache postgresql-client bash curl
 
-# 9. Copia artefatos do builder (incluindo todos os scripts)
+# 8️⃣ Copia artefatos do builder
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
-COPY --from=builder /app/.env ./
-COPY --from=builder /app/dist/ormconfig.js ./
-COPY --from=builder /app/dist/scripts/ ./scripts/
+COPY --from=builder /app/scripts ./scripts/
 
-# 10. Configuração final (com verificação de arquivos)
-RUN if [ -f "/app/scripts/wait-for-db" ]; then \
-    chmod +x /app/scripts/wait-for-db && \
-    echo "Script wait-for-db configurado com sucesso"; \
-    else \
-    echo "Criando wait-for-db alternativo" && \
-    echo '#!/bin/sh\necho "Script wait-for-db não encontrado, continuando..."\nsleep 2\nexec "$@"' > /app/scripts/wait-for-db && \
-    chmod +x /app/scripts/wait-for-db; \
-    fi && \
+# 9️⃣ Configura permissões
+RUN chmod +x /app/scripts/wait-for-db && \
     chown -R node:node /app
 
 USER node
 
-# 11. Healthcheck
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-    CMD curl -f http://localhost:3000/api/v1/health || exit 1
+# 🔟 Variáveis de ambiente
+ENV NODE_ENV=development \
+    PORT=3000 \
+    DB_HOST=db \
+    DB_PORT=5432 \
+    DB_USER=postgres \
+    DB_PASSWORD=senhasegura \
+    DB_NAME=open_banking \
+    CORS_ORIGIN=* \
+    API_PREFIX=api/v1
 
 EXPOSE 3000
 
-# 12. Comando de inicialização robusto
-CMD ["sh", "-c", "/app/scripts/wait-for-db db ${DB_USER:-postgres} ${DB_NAME:-open_banking} && node /app/scripts/run-migrations.js && node /app/dist/src/main.js"]
+# 🏁 Comando de inicialização
+CMD ["sh", "-c", "/app/scripts/wait-for-db && node /app/dist/src/main.js"]

@@ -109,29 +109,37 @@ As seguintes tecnologias foram usadas:
 ```bash
 
 1. Clone o repositório:
- $ git clone git@github.com:leandrojsantos/test-open-banking-codeFabrik.git
- $ cd open-banking-api-nest
+    git clone git@github.com:leandrojsantos/test-open-banking-codeFabrik.git
+
+    cd open-banking-api-nest
 
 2. Crie um arquivo `.env` baseado no `.env.example`
 
-3. Execute `docker compose build --no-cache && docker compose up -d` para subir os containers
+# obs: Execute os comandos no bash dento da pasta raiz do projeto.
 
-4. Execute as migrações: `yarn typeorm migration:run -d src/data-source.ts`
+# Refazendo todo o ambiente com docker:
+# Limpe artefatos antigos
+    sudo rm -rf dist node_modules yarn.lock
 
-5. Escolha uma da versões:
-# versão dev
-yarn install
-yarn run start:dev
-# versão produção
-yarn run build
-yarn run start:prod
+# Reinstale dependências
+    yarn install
 
-6. Acesse a documentação em:
-    - API : http://localhost:3000/api 
-    - Swagger UI (Rotas da api): http://localhost:3000/api
+# Reconstrua o projeto
+    yarn build
+
+# Reconstrua as imagens Docker
+    docker compose down && docker compose build --no-cache
+
+# Inicie a aplicação
+    docker compose up -d
+
+# Execute as migrações
+    docker compose run --rm app node scripts/run-migrations.js
+
+# Acesse a documentação em:
+    - Swagger UI (Rotas da api): http://localhost:3000/api/v1/docs
     - PGAdmin (Banco de dados da api use os dados ".env"): http://localhost:5050
-    - Health Check: http://localhost:3000/health
-
+    - Health Check: http://localhost:3000/api/v1/health
 
 ```
 ## Testes
