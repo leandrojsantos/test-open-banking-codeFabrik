@@ -86,12 +86,9 @@ Este diagrama mostra:
 # Primeiro, verifique se o script existe no container das migrações - run-migrations-new.js
     docker compose exec app ls -la /app/scripts/
 
-# Remoção das migrações antigas
-    docker compose run --rm app rm -f /app/scripts/run-migrations.js
-
 # Execute as migrações
-    docker compose exec db psql -U postgres -app node /app/scripts/run-migrations.js
-
+    docker compose run --rm app rm -f /app/scripts/run-migrations.js
+    
 # Acesse a documentação em:
     - Swagger UI (Rotas da api): http://localhost:3000/api/v1/docs
     - PGAdmin (Banco de dados da api use os dados ".env"): http://localhost:5050
@@ -99,7 +96,7 @@ Este diagrama mostra:
 ```
 
 ```bash
-✅ O que aconteceu testes:
+✅ O que aconteceu:
     Migração aplicada: CreateInitialTables1698765432100
     Registro inserido: Na tabela migrations
     Transação commitada: Tudo foi confirmado no banco
