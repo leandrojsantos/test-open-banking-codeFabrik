@@ -2,13 +2,13 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
  * Initial database Open Banking API
- * Creates users, accounts, and transactions tables
+ * Creates user, users, accounts, and transactions tables
  */
 export class CreateInitialTables1698765432100 implements MigrationInterface {
   name = 'CreateInitialTables1698765432100';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // 1. Enable UUID extension
+    // 1. UUID extension
     await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
 
     // 2. Create tables
@@ -47,13 +47,13 @@ export class CreateInitialTables1698765432100 implements MigrationInterface {
       );
     `);
 
-    // 3. Create indexes (Opcional, mas recomendado)
+    // 3. Create indexes 
     await queryRunner.query(`
       CREATE INDEX idx_account_user_id ON accounts("userId");
       CREATE INDEX idx_transaction_account_id ON transactions("accountId");
     `);
 
-    // 4. Add constraints (Opcional)
+    // 4. Add constraints 
     await queryRunner.query(`
       ALTER TABLE transactions ADD CONSTRAINT chk_amount CHECK (amount > 0);
     `);

@@ -40,6 +40,7 @@ WORKDIR /app
 RUN apk add --no-cache postgresql-client bash curl
 
 # 8️⃣ Copia artefatos do builder
+COPY --from=builder /app/scripts/run-migrations.js ./scripts/
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
