@@ -60,11 +60,10 @@ Este diagrama mostra:
 
 1. Clone o repositório:
     git clone git@github.com:leandrojsantos/test-open-banking-codeFabrik.git
-
     cd open-banking-api-nest
 
-2. Crie um arquivo `.env` baseado no `.env.example`
-    cp .env.example .env ou coloque os dados do seu banco de dados no arquivo .env
+2. Crie um arquivo `.env` baseado no `.env.example` e configure as variáveis de ambiente necessárias.
+    cp .env.example .env se preferir mude os dados no arquivo ".env"
 
 3. Execute a aplicação: # obs: Execute o comando no bash dento da pasta raiz do projeto ../api-nest:
     make iniciar
