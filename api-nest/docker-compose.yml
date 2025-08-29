@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     container_name: open-banking-app
@@ -29,6 +27,10 @@ services:
       timeout: 10s
       retries: 3
     restart: unless-stopped
+    labels:
+      - "com.docker.compose.project=open-banking-api"
+      - "app=open-banking"
+      - "component=backend"
 
   db:
     container_name: open-banking-db
@@ -47,6 +49,10 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+    labels:
+      - "com.docker.compose.project=open-banking-api"
+      - "app=open-banking"
+      - "component=database"
 
   pgadmin:
     container_name: open-banking-pgadmin
@@ -62,10 +68,22 @@ services:
     networks:
       - banking-network
     restart: unless-stopped
+    labels:
+      - "com.docker.compose.project=open-banking-api"
+      - "app=open-banking"
+      - "component=admin"
 
 volumes:
   postgres-data:
+    labels:
+      - "com.docker.compose.project=open-banking-api"
+      - "app=open-banking"
+      - "component=database-volume"
 
 networks:
   banking-network:
     driver: bridge
+    labels:
+      - "com.docker.compose.project=open-banking-api"
+      - "app=open-banking"
+      - "component=network"

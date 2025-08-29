@@ -140,7 +140,7 @@ As seguintes tecnologias foram usadas:
     - Swagger UI (Rotas da api): http://localhost:3000/api/v1/docs
     - PGAdmin (Banco de dados da api use os dados ".env"): http://localhost:5050
     - Health Check: http://localhost:3000/api/v1/health
-
+    - Veja o log da aplicação e explicação no arquivo `"makefile"
 ```
 ## Testes
 ```bash
