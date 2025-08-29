@@ -9,7 +9,7 @@
 <p align="center">
  <a href="#funcionalidades">Funcionalidades</a> • 
  <a href="#pré-requisitos">Pré-requisitos</a> •
- <a href="#rodando-o-projeto">Rodando o back-end</a> •
+ <a href="#api-rodando">API Rodando</a> •
  <a href="#testes">Testes</a> •
  <a href="#endpoints-principais">Endpoints Principais</a> •
  <a href="#considerações-finais">Considerações Finais</a> 
@@ -105,52 +105,38 @@ As seguintes tecnologias foram usadas:
 
 - Monitoramento: Health Checks
 
-## Rodando o projeto
+## API Rodando 
+Para rodar a API em modo de desenvolvimento, execute os seguintes comandos:
 ```bash
 
 1. Clone o repositório:
     git clone git@github.com:leandrojsantos/test-open-banking-codeFabrik.git
-
     cd open-banking-api-nest
 
-2. Crie um arquivo `.env` baseado no `.env.example`
+2. Crie um arquivo `.env` baseado no `.env.example` e configure as variáveis de ambiente necessárias.
+    cp .env.example .env se preferir mude os dados no arquivo ".env"
 
-# obs: Execute os comandos no bash dento da pasta raiz do projeto.
-
-# Refazendo todo o ambiente com docker:
-# Limpe artefatos antigos
-    sudo rm -rf dist node_modules yarn.lock
-
-# Reinstale dependências
-    yarn install
-
-# Reconstrua o projeto
-    yarn build
-
-# Reconstrua as imagens Docker
-    docker compose down && docker compose build --no-cache
-
-# Inicie a aplicação
-    docker compose up -d
-
-# Execute as migrações
-    docker compose run --rm app node scripts/run-migrations.js
+3. Execute a aplicação: # obs: Execute o comando no bash dento da pasta raiz do projeto ../api-nest:
+    make iniciar
 
 # Acesse a documentação em:
     - Swagger UI (Rotas da api): http://localhost:3000/api/v1/docs
     - PGAdmin (Banco de dados da api use os dados ".env"): http://localhost:5050
     - Health Check: http://localhost:3000/api/v1/health
-    - Veja o log da aplicação e explicação no arquivo `"makefile"
+
+# Makefile para rodar a aplicação e também tem o comando para verificar o status da aplicação:
+    - Veja o log da aplicação e explicação no arquivo `"makefile" 
+    - No arquivo `"makefile" tem os comandos para rodar a aplicação em modo de produção
+    
 ```
 ## Testes
 ```bash
 # Cobertura de testes em dev
-npm test
-npm run test:cov 
+yarn run test
+yarn run test:cov 
 
 # Cobertura de testes em produção
-npm run build
-npm run start:prod
+yarn run test:e2e
 
 ```
 
