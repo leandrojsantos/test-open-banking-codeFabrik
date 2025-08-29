@@ -64,62 +64,12 @@ Este diagrama mostra:
     cd open-banking-api-nest
 
 2. Crie um arquivo `.env` baseado no `.env.example`
+    cp .env.example .env ou coloque os dados do seu banco de dados no arquivo .env
 
-# obs: Execute os comandos no bash dento da pasta raiz do projeto.
+3. Execute a aplicação: # obs: Execute o comando no bash dento da pasta raiz do projeto ../api-nest:
+    make iniciar
 
-# Refazendo todo o ambiente com docker:
-# Limpe artefatos antigos
-    sudo rm -rf dist node_modules yarn.lock
-
-# Reinstale dependências
-    yarn install
-
-# Reconstrua o projeto
-    yarn build
-
-# Reconstrua as imagens Docker
-    docker compose down && docker compose build --no-cache
-
-# Inicie a aplicação
-    docker compose up -d
-
-# Primeiro, verifique se o script existe no container das migrações - run-migrations-new.js
-    docker compose exec app ls -la /app/scripts/
-
-# Execute as migrações
-    docker compose run --rm app rm -f /app/scripts/run-migrations.js
-    
-# Acesse a documentação em:
-    - Swagger UI (Rotas da api): http://localhost:3000/api/v1/docs
-    - PGAdmin (Banco de dados da api use os dados ".env"): http://localhost:5050
-    - Health Check: http://localhost:3000/api/v1/health
-```
-
-```bash
-✅ O que aconteceu:
-    Migração aplicada: CreateInitialTables1698765432100
-    Registro inserido: Na tabela migrations
-    Transação commitada: Tudo foi confirmado no banco
-    Conexão fechada: Sem erros
-
-1. Verifique as migrações no banco:
-    docker compose exec db psql -U postgres -d open_banking -c "SELECT * FROM migrations;"
-
-2. Verifique as tabelas criadas:
-    docker compose exec db psql -U postgres -d open_banking -c "\dt"
-
-3. Inicie a aplicação:
-    docker compose up -d app
-
-4. Verifique se a aplicação está rodando:
-    docker compose logs -f app
-
-5. Teste os endpoints:
-# Health check
-curl http://localhost:3000/api/v1/health
-
-# Swagger UI
-curl http://localhost:3000/api/v1/docs
+4. Acesse o arquivo ./api-nest/README-API-DOCS.md e siga as instruções veja a documentação da API
 
 ```
 
